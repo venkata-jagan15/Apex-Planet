@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shine Product Catalog</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right top, #e0f2fe, #c7d2fe);
+      color: #1e293b;
+      padding: 30px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 38px;
+      color: #3b82f6;
+      letter-spacing: 1px;
+      text-shadow: 1px 1px 8px rgba(59, 130, 246, 0.2);
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 40px;
+    }
+
+    .filters select,
+    .filters input {
+      padding: 10px 15px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 1px solid #94a3b8;
+      background: #f1f5f9;
+      color: #1e293b;
+      box-shadow: 0 2px 10px rgba(59, 130, 246, 0.1);
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .product-card {
+      background: #ffffffcc;
+      border: 1px solid #dbeafe;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(30, 58, 138, 0.1);
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.2);
+    }
+
+    .product-card h3 {
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .product-card p {
+      font-size: 16px;
+      color: #475569;
+      margin-bottom: 6px;
+    }
+
+    .rating {
+      color: #eab308;
+      font-size: 17px;
+    }
+
+    @media (max-width: 600px) {
+      .filters {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>🛒 Shine Product Catalog</h1>
+
+  <div class="filters">
+    <select id="categoryFilter">
+      <option value="All">All Categories</option>
+      <option value="Electronics">Electronics</option>
+      <option value="Clothes">Clothes</option>
+      <option value="Books">Books</option>
+      <option value="Beauty">Beauty</option>
+    </select>
+
+    <input type="number" id="maxPrice" placeholder="Max Price ₹" />
+
+    <select id="sortBy">
+      <option value="default">Sort by Rating</option>
+      <option value="high">High to Low</option>
+      <option value="low">Low to High</option>
+    </select>
+  </div>
+
+  <div class="product-grid" id="productList">
+  </div>
+
+  <script>
+    const products = [
+      { name: 'Smartphone', category: 'Electronics', price: 799, rating: 4.5 },
+      { name: 'T-Shirt', category: 'Clothes', price: 399, rating: 4.2 },
+      { name: 'Lipstick', category: 'Beauty', price: 199, rating: 4.8 },
+      { name: 'JavaScript Book', category: 'Books', price: 499, rating: 4.7 },
+      { name: 'Laptop', category: 'Electronics', price: 55999, rating: 4.9 },
+      { name: 'Sneakers', category: 'Clothes', price: 1099, rating: 4.3 },
+      { name: 'Face Wash', category: 'Beauty', price: 149, rating: 4.0 },
+      { name: 'Hoodie', category: 'Clothes', price: 899, rating: 4.6 },
+      { name: 'Earphones', category: 'Electronics', price: 1299, rating: 4.4 },
+      { name: 'Hair Oil', category: 'Beauty', price: 129, rating: 4.1 },
+      { name: 'Self-Help Book', category: 'Books', price: 349, rating: 4.5 },
+      { name: 'Power Bank', category: 'Electronics', price: 999, rating: 4.3 }
+    ];
+
+    const productList = document.getElementById('productList');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const maxPrice = document.getElementById('maxPrice');
+    const sortBy = document.getElementById('sortBy');
+
+    function renderProducts(list) {
+      productList.innerHTML = '';
+      list.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <h3>${product.name}</h3>
+          <p>₹${product.price}</p>
+          <div class="rating">⭐ ${product.rating}</div>
+        `;
+        productList.appendChild(card);
+      });
+    }
+
+    function filterProducts() {
+      let filtered = [...products];
+
+      const category = categoryFilter.value;
+      const price = parseFloat(maxPrice.value);
+      const sort = sortBy.value;
+
+      if (category !== 'All') {
+        filtered = filtered.filter(p => p.category === category);
+      }
+
+      if (!isNaN(price)) {
+        filtered = filtered.filter(p => p.price <= price);
+      }
+
+      if (sort === 'high') {
+        filtered.sort((a, b) => b.rating - a.rating);
+      } else if (sort === 'low') {
+        filtered.sort((a, b) => a.rating - b.rating);
+      }
+
+      renderProducts(filtered);
+    }
+
+    categoryFilter.addEventListener('change', filterProducts);
+    maxPrice.addEventListener('input', filterProducts);
+    sortBy.addEventListener('change', filterProducts);
+
+    renderProducts(products);
+  </script>
+</body>
+</html>
